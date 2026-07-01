@@ -13,7 +13,8 @@ export const AppContent: React.FC = () => {
   });
 
   const params = new URLSearchParams(window.location.search);
-  const showAdminToggle = params.get("admin") === "true" || params.get("painel") === "true" || viewMode === "admin";
+  const isAdmin = params.get("admin") === "true" || params.get("painel") === "true";
+  const showAdminToggle = isAdmin || viewMode === "admin";
 
   // Hook para sincronizar os filtros na URL do navegador
   const {
@@ -94,6 +95,7 @@ export const AppContent: React.FC = () => {
             itens={itens}
             setItens={setItens}
             clearFilters={clearFilters}
+            isAdmin={isAdmin}
           />
         ) : (
           <AdminDashboard />

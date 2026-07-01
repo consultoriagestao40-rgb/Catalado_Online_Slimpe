@@ -17,6 +17,7 @@ interface ClientCatalogProps {
   itens: string;
   setItens: (itens: string) => void;
   clearFilters: () => void;
+  isAdmin: boolean;
 }
 
 export const ClientCatalog: React.FC<ClientCatalogProps> = ({
@@ -29,6 +30,7 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
   itens,
   setItens,
   clearFilters,
+  isAdmin,
 }) => {
   const { products, categories } = useProducts();
   const [catalogCopied, setCatalogCopied] = useState(false);
@@ -318,8 +320,8 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
                 key={product.id}
                 product={product}
                 onFocusProduct={setProdutoId}
-                // Exibe checkbox de seleção se não estiver na visão de lista já compartilhada
-                showSelectCheckbox={sharedProductIds.length === 0}
+                // Exibe checkbox de seleção se não estiver na visão de lista já compartilhada e for o administrador
+                showSelectCheckbox={sharedProductIds.length === 0 && isAdmin}
                 isSelected={selectedProductIds.includes(product.id)}
                 onToggleSelect={handleToggleSelect}
               />
@@ -348,8 +350,8 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
         )}
       </div>
 
-      {/* Barra flutuante de compartilhamento de itens selecionados */}
-      {selectedProductIds.length > 0 && sharedProductIds.length === 0 && (
+      {/* Barra flutuante de compartilhamento de itens selecionados (apenas visível para o admin) */}
+      {selectedProductIds.length > 0 && sharedProductIds.length === 0 && isAdmin && (
         <div className="fixed bottom-6 inset-x-4 z-40 max-w-2xl mx-auto animate-slide-up">
           <div className="glassmorphism-dark text-white rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xl border border-slate-700/50">
             <div className="text-center sm:text-left">
