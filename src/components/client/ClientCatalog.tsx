@@ -121,8 +121,9 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
     const currentUrl = window.location.href;
     const success = await shareLink(
       focusedProduct.name,
-      `Confira ${focusedProduct.name} na Slimpe!`,
-      currentUrl
+      `Confira o produto ${focusedProduct.name} na Slimpe!`,
+      currentUrl,
+      focusedProduct.imageUrl
     );
     if (success) {
       setFocusedCopied(true);

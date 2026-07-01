@@ -18,21 +18,53 @@ export function getWhatsAppLink(productName: string, productPrice?: number): str
 }
 
 /**
- * Tenta compartilhar o produto usando a Web Share API.
- * Caso não esteja disponível, copia o link para a área de transferência.
- * @returns Promessa com booleano indicando se foi copiado (caso não use Web Share)
+ * Tenta compartilhar o produto usando a Web Share API, incluindo o arquivo de imagem se possível.
  */
-export async function shareLink(title: string, text: string, url: string): Promise<boolean> {
+export async function shareLink(title: string, text: string, url: string, imageUrl?: string): Promise<boolean> {
   if (navigator.share) {
     try {
-      await navigator.share({
+      const shareData: ShareData = {
         title,
-        text,
-        url
-      });
+        text: `${text} ${url}`,
+      };
+
+      // Tenta anexar o arquivo de imagem se fornecido e se o navegador suportar
+      if (imageUrl) {
+        try {
+          // Utiliza o proxy local de imagens para evitar problemas de CORS
+          const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
+          const response = await fetch(proxyUrl);
+          
+          if (response.ok) {
+            const blob = await response.blob();
+            const mimeType = blob.type || 'image/jpeg';
+            const extension = mimeType.split('/')[1] || 'jpg';
+            const filename = `produto.${extension}`;
+            
+            const file = new File([blob], filename, { type: mimeType });
+
+            // Verifica se o navegador aceita compartilhar o arquivo
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              shareData.files = [file];
+              // Ajusta o texto de compartilhamento com a imagem anexada
+              shareData.text = `${title}\n${text}\n${url}`;
+              // Alguns aplicativos no celular requerem apenas texto e arquivos, ocultando o link separado
+              delete shareData.url;
+            }
+          }
+        } catch (fileErr) {
+          console.warn("Falha ao preparar arquivo de imagem para Web Share:", fileErr);
+        }
+      }
+
+      // Garante a presença da URL caso arquivos não sejam enviados
+      if (!shareData.files && !shareData.url) {
+        shareData.url = url;
+      }
+
+      await navigator.share(shareData);
       return true;
     } catch (error) {
-      // Se o usuário cancelar o compartilhamento ou der erro, falha silenciosamente
       if ((error as Error).name !== 'AbortError') {
         console.error("Erro ao usar Web Share API:", error);
       }
