@@ -48,25 +48,29 @@ export const AppContent: React.FC = () => {
       {/* Header / Navbar */}
       <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 h-16 md:h-20 flex justify-between items-center relative">
-          {/* Logo */}
+          {/* Logo e Nome (celular) */}
           <div 
             onClick={() => {
               setViewMode("client");
               window.history.replaceState(null, "", "/");
               clearFilters();
             }}
-            className="flex items-center cursor-pointer select-none group z-10"
+            className="flex items-center gap-2 cursor-pointer select-none group z-10"
           >
             <img 
               src="https://slimpe.com.br/wp-content/uploads/2022/08/slimpe_logo_site.png" 
               alt="Slimpe Logo" 
               className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
             />
+            {/* Exibe o nome ao lado do logo apenas no celular */}
+            <span className="sm:hidden font-extrabold text-slate-800 text-[11px] tracking-tight border-l border-slate-200 pl-2 whitespace-nowrap">
+              Catálogo de Soluções <span className="text-emerald-600 font-black">Slimpe</span>
+            </span>
           </div>
 
-          {/* Nome do Catálogo Centralizado */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
-            <span className="pointer-events-auto font-extrabold text-slate-800 text-[13px] sm:text-xl md:text-3xl tracking-tight text-center whitespace-nowrap">
+          {/* Nome do Catálogo Centralizado (Web/Desktop/Tablet) */}
+          <div className="hidden sm:absolute sm:inset-0 sm:flex sm:items-center sm:justify-center pointer-events-none px-4">
+            <span className="pointer-events-auto font-extrabold text-slate-800 text-xl md:text-3xl tracking-tight text-center whitespace-nowrap">
               Catálogo de Soluções <span className="text-emerald-600 font-black">Slimpe</span>
             </span>
           </div>
