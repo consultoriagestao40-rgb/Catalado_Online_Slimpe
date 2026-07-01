@@ -62,7 +62,7 @@ export const AppContent: React.FC = () => {
               alt="Slimpe Logo" 
               className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
             />
-            <span className="hidden sm:inline-block font-extrabold text-slate-800 text-sm md:text-lg tracking-tight border-l border-slate-200 pl-3.5">
+            <span className="inline-block font-extrabold text-slate-800 text-xs sm:text-lg md:text-2xl tracking-tight border-l border-slate-200 pl-2 sm:pl-3.5">
               Catálogo de Soluções <span className="text-emerald-600 font-black">Slimpe</span>
             </span>
           </div>
