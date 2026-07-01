@@ -6,8 +6,14 @@ import { AdminDashboard } from "./components/admin/AdminDashboard";
 import { User, ShieldCheck } from "lucide-react";
 
 export const AppContent: React.FC = () => {
-  // Estado para alternar entre visão do cliente e visão administrativa
-  const [viewMode, setViewMode] = useState<"client" | "admin">("client");
+  // Estado para alternar entre visão do cliente e visão administrativa (inicia em admin se houver parâmetro na URL)
+  const [viewMode, setViewMode] = useState<"client" | "admin">(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("admin") === "true" || params.get("painel") === "true" ? "admin" : "client";
+  });
+
+  const params = new URLSearchParams(window.location.search);
+  const showAdminToggle = params.get("admin") === "true" || params.get("painel") === "true" || viewMode === "admin";
 
   // Hook para sincronizar os filtros na URL do navegador
   const {
@@ -40,34 +46,36 @@ export const AppContent: React.FC = () => {
             />
           </div>
 
-          {/* Seletor de Visão (Pública vs Administrativa) */}
-          <div className="flex gap-1.5 bg-slate-100/80 p-1 rounded-2xl border border-slate-200/55">
-            <button
-              onClick={() => setViewMode("client")}
-              id="nav-btn-client"
-              className={`flex items-center gap-1.5 py-2 px-4 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
-                viewMode === "client"
-                  ? "bg-white text-slate-800 shadow-xs"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <User className="h-3.5 w-3.5" />
-              <span>Ver Catálogo</span>
-            </button>
+          {/* Seletor de Visão (Pública vs Administrativa) - Visível apenas para o Lojista (?admin=true na URL) */}
+          {showAdminToggle && (
+            <div className="flex gap-1.5 bg-slate-100/80 p-1 rounded-2xl border border-slate-200/55">
+              <button
+                onClick={() => setViewMode("client")}
+                id="nav-btn-client"
+                className={`flex items-center gap-1.5 py-2 px-4 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
+                  viewMode === "client"
+                    ? "bg-white text-slate-800 shadow-xs"
+                    : "text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                <User className="h-3.5 w-3.5" />
+                <span>Ver Catálogo</span>
+              </button>
 
-            <button
-              onClick={() => setViewMode("admin")}
-              id="nav-btn-admin"
-              className={`flex items-center gap-1.5 py-2 px-4 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
-                viewMode === "admin"
-                  ? "bg-slate-900 text-white shadow-md shadow-slate-900/10"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <ShieldCheck className="h-3.5 w-3.5" />
-              <span>Painel Lojista</span>
-            </button>
-          </div>
+              <button
+                onClick={() => setViewMode("admin")}
+                id="nav-btn-admin"
+                className={`flex items-center gap-1.5 py-2 px-4 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
+                  viewMode === "admin"
+                    ? "bg-slate-900 text-white shadow-md shadow-slate-900/10"
+                    : "text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>Painel Lojista</span>
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
