@@ -20,9 +20,11 @@ export const AppContent: React.FC = () => {
     busca,
     categoria,
     produtoId,
+    itens,
     setBusca,
     setCategoria,
     setProdutoId,
+    setItens,
     clearFilters,
   } = useQueryParams();
 
@@ -89,6 +91,8 @@ export const AppContent: React.FC = () => {
             setCategoria={setCategoria}
             produtoId={produtoId}
             setProdutoId={setProdutoId}
+            itens={itens}
+            setItens={setItens}
             clearFilters={clearFilters}
           />
         ) : (

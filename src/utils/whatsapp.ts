@@ -3,7 +3,7 @@
  */
 
 // Telefone padrão da Slimpe (pode ser configurado via variável de ambiente no futuro)
-export const SLIMPE_WHATSAPP_NUMBER = "5511999999999";
+export const SLIMPE_WHATSAPP_NUMBER = "5541988558959";
 
 /**
  * Cria o link direto para o WhatsApp com mensagem pré-definida sobre o produto.

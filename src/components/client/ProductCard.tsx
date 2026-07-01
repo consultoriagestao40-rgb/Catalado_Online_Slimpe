@@ -7,12 +7,18 @@ interface ProductCardProps {
   product: Product;
   onFocusProduct?: (id: string) => void;
   isFocused?: boolean;
+  isSelected?: boolean;
+  onToggleSelect?: (id: string) => void;
+  showSelectCheckbox?: boolean;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ 
   product, 
   onFocusProduct,
-  isFocused = false
+  isFocused = false,
+  isSelected = false,
+  onToggleSelect,
+  showSelectCheckbox = false
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -55,10 +61,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div
       onClick={() => onFocusProduct?.(product.id)}
-      className={`group flex flex-col bg-white rounded-3xl overflow-hidden border transition-all duration-300 hover-lift cursor-pointer ${
-        isFocused 
-          ? "border-emerald-500 ring-2 ring-emerald-500/20 shadow-lg shadow-emerald-500/5" 
-          : "border-slate-100 shadow-xs hover:border-slate-200"
+      className={`group flex flex-col bg-white rounded-3xl overflow-hidden border transition-all duration-300 hover-lift cursor-pointer relative ${
+        isSelected
+          ? "border-emerald-600 ring-2 ring-emerald-600/10 shadow-md shadow-emerald-600/5 bg-emerald-50/10"
+          : isFocused
+            ? "border-emerald-500 ring-2 ring-emerald-500/20 shadow-lg shadow-emerald-500/5"
+            : "border-slate-100 shadow-xs hover:border-slate-200"
       }`}
     >
       {/* Imagem do Produto */}
@@ -69,6 +77,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
+        {/* Checkbox de Seleção Personalizada */}
+        {showSelectCheckbox && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSelect?.(product.id);
+            }}
+            className={`absolute top-4 left-4 h-6 w-6 rounded-lg flex items-center justify-center border transition-all duration-200 shadow-sm cursor-pointer z-10 ${
+              isSelected
+                ? "bg-emerald-600 border-emerald-600 text-white"
+                : "bg-white/90 backdrop-blur-xs border-slate-200 text-transparent hover:scale-105"
+            }`}
+          >
+            <Check className={`h-3.5 w-3.5 stroke-[3] ${isSelected ? "text-white" : "hover:text-slate-400"}`} />
+          </button>
+        )}
+
         {product.price === undefined && (
           <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-amber-500 text-white text-xs font-semibold shadow-xs">
             Sob Consulta

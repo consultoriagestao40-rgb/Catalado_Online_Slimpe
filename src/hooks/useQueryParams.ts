@@ -4,6 +4,7 @@ interface Filters {
   busca: string;
   categoria: string;
   produtoId: string;
+  itens: string;
 }
 
 /**
@@ -17,6 +18,7 @@ export function useQueryParams() {
       busca: params.get("busca") || "",
       categoria: params.get("categoria") || "",
       produtoId: params.get("produto") || "",
+      itens: params.get("itens") || "",
     };
   });
 
@@ -32,6 +34,9 @@ export function useQueryParams() {
     }
     if (filters.produtoId) {
       params.set("produto", filters.produtoId);
+    }
+    if (filters.itens) {
+      params.set("itens", filters.itens);
     }
 
     const newSearch = params.toString();
@@ -49,6 +54,7 @@ export function useQueryParams() {
         busca: params.get("busca") || "",
         categoria: params.get("categoria") || "",
         produtoId: params.get("produto") || "",
+        itens: params.get("itens") || "",
       });
     };
 
@@ -68,8 +74,12 @@ export function useQueryParams() {
     setFilters((prev) => ({ ...prev, produtoId }));
   }, []);
 
+  const setItens = useCallback((itens: string) => {
+    setFilters((prev) => ({ ...prev, itens }));
+  }, []);
+
   const clearFilters = useCallback(() => {
-    setFilters({ busca: "", categoria: "", produtoId: "" });
+    setFilters({ busca: "", categoria: "", produtoId: "", itens: "" });
   }, []);
 
   // Retorna a URL completa atual com os filtros aplicados
@@ -81,9 +91,11 @@ export function useQueryParams() {
     busca: filters.busca,
     categoria: filters.categoria,
     produtoId: filters.produtoId,
+    itens: filters.itens,
     setBusca,
     setCategoria,
     setProdutoId,
+    setItens,
     clearFilters,
     getCurrentShareUrl,
   };

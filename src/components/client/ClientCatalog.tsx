@@ -14,6 +14,8 @@ interface ClientCatalogProps {
   setCategoria: (categoria: string) => void;
   produtoId: string;
   setProdutoId: (id: string) => void;
+  itens: string;
+  setItens: (itens: string) => void;
   clearFilters: () => void;
 }
 
@@ -24,14 +26,30 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
   setCategoria,
   produtoId,
   setProdutoId,
+  itens,
+  setItens,
   clearFilters,
 }) => {
   const { products, categories } = useProducts();
   const [catalogCopied, setCatalogCopied] = useState(false);
   const [focusedCopied, setFocusedCopied] = useState(false);
+  const [personalLinkCopied, setPersonalLinkCopied] = useState(false);
 
-  // Filtra os produtos
+  // Estado para armazenar os IDs dos produtos selecionados localmente para compartilhamento customizado
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+
+  // Analisa se há itens pré-selecionados e compartilhados na URL
+  const sharedProductIds = useMemo(() => {
+    return itens ? itens.split(",").filter(Boolean) : [];
+  }, [itens]);
+
+  // Filtra os produtos com base na busca, categoria ou compartilhamento de itens específicos
   const filteredProducts = useMemo(() => {
+    // Se a URL contém itens específicos compartilhados, exibe APENAS estes itens
+    if (sharedProductIds.length > 0) {
+      return products.filter((p) => sharedProductIds.includes(p.id));
+    }
+
     return products.filter((product) => {
       // Filtro de Categoria
       if (categoria && product.category !== categoria) {
@@ -48,7 +66,7 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
       }
       return true;
     });
-  }, [products, categoria, busca]);
+  }, [products, categoria, busca, sharedProductIds]);
 
   // Busca o produto focado por ID se houver deep linking de produto específico
   const focusedProduct = useMemo(() => {
@@ -56,7 +74,36 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
     return products.find((p) => p.id === produtoId) || null;
   }, [products, produtoId]);
 
-  // Função para compartilhar o link atual do catálogo com todos os filtros
+  // Alterna a seleção de um produto individual
+  const handleToggleSelect = (productId: string) => {
+    setSelectedProductIds((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
+  // Limpa toda a seleção local
+  const handleClearSelection = () => {
+    setSelectedProductIds([]);
+  };
+
+  // Compartilha o link dos produtos selecionados localmente
+  const handleShareSelected = async () => {
+    if (selectedProductIds.length === 0) return;
+    const url = new URL(window.location.origin + window.location.pathname);
+    url.searchParams.set("itens", selectedProductIds.join(","));
+    
+    const shareUrl = url.toString();
+    const isCopied = await copyTextToClipboard(shareUrl);
+    
+    if (isCopied) {
+      setPersonalLinkCopied(true);
+      setTimeout(() => setPersonalLinkCopied(false), 2000);
+    }
+  };
+
+  // Função para compartilhar o link atual do catálogo com todos os filtros normais
   const handleShareCatalog = async () => {
     const currentUrl = window.location.href;
     const success = await copyTextToClipboard(currentUrl);
@@ -187,57 +234,83 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
+      {/* Banner de Lista Customizada Compartilhada */}
+      {sharedProductIds.length > 0 && (
+        <div className="bg-emerald-600 text-white py-3.5 px-4 text-center sticky top-16 md:top-20 z-30 shadow-md">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-center items-center gap-3">
+            <span className="text-sm font-semibold tracking-wide">
+              Você está visualizando uma lista personalizada com {sharedProductIds.length} produto(s) da Slimpe!
+            </span>
+            <button
+              onClick={() => {
+                setItens("");
+                clearFilters();
+              }}
+              className="px-4 py-1.5 rounded-full bg-white hover:bg-slate-100 text-emerald-800 text-xs font-bold transition-all shadow-xs cursor-pointer"
+            >
+              Ver Catálogo Completo
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Banner Principal com Apresentação */}
       <div className="text-center max-w-3xl mx-auto px-4 py-8 md:py-12">
         <h1 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tight">
           Catálogo de Soluções <span className="text-emerald-600">Slimpe</span>
         </h1>
         <p className="mt-4 text-base md:text-lg text-slate-500 leading-relaxed">
-          Tudo o que sua empresa precisa em produtos de limpeza de alta performance, 
-          higiene, descartáveis e utensílios profissionais. Agilidade e qualidade.
+          {sharedProductIds.length > 0 
+            ? "Confira os itens selecionados abaixo especialmente para você. Fale conosco no WhatsApp para tirar dúvidas ou fazer pedidos!"
+            : "Tudo o que sua empresa precisa em produtos de limpeza de alta performance, higiene, descartáveis e utensílios profissionais."
+          }
         </p>
 
-        {/* Botão para Compartilhar Link do Catálogo atual com Filtros */}
-        <div className="mt-6 flex justify-center">
-          <button
-            onClick={handleShareCatalog}
-            id="share-catalog-btn"
-            className={`flex items-center gap-2 py-2.5 px-5 rounded-full border text-sm font-semibold transition-all duration-200 cursor-pointer ${
-              catalogCopied
-                ? "bg-emerald-50 border-emerald-200 text-emerald-600"
-                : "bg-white border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-800 shadow-xs"
-            }`}
-          >
-            {catalogCopied ? (
-              <>
-                <Check className="h-4 w-4 animate-scale" />
-                <span>Link do Catálogo Copiado!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="h-4 w-4" />
-                <span>Compartilhar Link do Catálogo</span>
-              </>
-            )}
-          </button>
-        </div>
+        {/* Botão para Compartilhar Link do Catálogo atual com Filtros (apenas se não estiver na visualização de lista customizada) */}
+        {sharedProductIds.length === 0 && (
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={handleShareCatalog}
+              id="share-catalog-btn"
+              className={`flex items-center gap-2 py-2.5 px-5 rounded-full border text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                catalogCopied
+                  ? "bg-emerald-50 border-emerald-200 text-emerald-600"
+                  : "bg-white border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-800 shadow-xs"
+              }`}
+            >
+              {catalogCopied ? (
+                <>
+                  <Check className="h-4 w-4 animate-scale" />
+                  <span>Link do Catálogo Copiado!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-4 w-4" />
+                  <span>Compartilhar Link do Catálogo</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Seção de Filtros e Busca */}
-      <div className="max-w-7xl mx-auto px-4 mb-10 flex flex-col gap-6">
-        <SearchBar value={busca} onChange={setBusca} />
-        
-        <CategoryFilter
-          categories={categories}
-          selectedCategory={categoria}
-          onSelectCategory={setCategoria}
-          products={products}
-        />
-      </div>
+      {/* Seção de Filtros e Busca (Esconde ao visualizar compartilhamento de itens específicos para manter o foco) */}
+      {sharedProductIds.length === 0 && (
+        <div className="max-w-7xl mx-auto px-4 mb-10 flex flex-col gap-6">
+          <SearchBar value={busca} onChange={setBusca} />
+          
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={categoria}
+            onSelectCategory={setCategoria}
+            products={products}
+          />
+        </div>
+      )}
 
       {/* Grid de Produtos */}
-      <div className="max-w-7xl mx-auto px-4 pb-20">
+      <div className="max-w-7xl mx-auto px-4 pb-32">
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {filteredProducts.map((product) => (
@@ -245,6 +318,10 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
                 key={product.id}
                 product={product}
                 onFocusProduct={setProdutoId}
+                // Exibe checkbox de seleção se não estiver na visão de lista já compartilhada
+                showSelectCheckbox={sharedProductIds.length === 0}
+                isSelected={selectedProductIds.includes(product.id)}
+                onToggleSelect={handleToggleSelect}
               />
             ))}
           </div>
@@ -256,17 +333,64 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
             </div>
             <h3 className="text-lg font-bold text-slate-800">Nenhum produto encontrado</h3>
             <p className="mt-2 text-sm text-slate-400">
-              Não encontramos nenhum item correspondente aos filtros aplicados. tente remover os filtros.
+              Não encontramos nenhum item correspondente.
             </p>
             <button
-              onClick={clearFilters}
+              onClick={() => {
+                setItens("");
+                clearFilters();
+              }}
               className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white text-sm font-semibold transition-colors cursor-pointer"
             >
-              <span>Limpar Filtros e Buscar Tudo</span>
+              <span>Ver Catálogo Completo</span>
             </button>
           </div>
         )}
       </div>
+
+      {/* Barra flutuante de compartilhamento de itens selecionados */}
+      {selectedProductIds.length > 0 && sharedProductIds.length === 0 && (
+        <div className="fixed bottom-6 inset-x-4 z-40 max-w-2xl mx-auto animate-slide-up">
+          <div className="glassmorphism-dark text-white rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xl border border-slate-700/50">
+            <div className="text-center sm:text-left">
+              <p className="font-extrabold text-sm sm:text-base">
+                {selectedProductIds.length} {selectedProductIds.length === 1 ? "item selecionado" : "itens selecionados"}
+              </p>
+              <p className="text-xs text-slate-400 font-medium">
+                Crie um link exclusivo contendo apenas estes itens.
+              </p>
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button
+                onClick={handleClearSelection}
+                className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-900 border border-slate-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer text-slate-300"
+              >
+                Limpar
+              </button>
+              <button
+                onClick={handleShareSelected}
+                className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+                  personalLinkCopied
+                    ? "bg-emerald-600 text-white"
+                    : "bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white shadow-md shadow-emerald-500/10"
+                }`}
+              >
+                {personalLinkCopied ? (
+                  <>
+                    <Check className="h-4.5 w-4.5" />
+                    <span>Link Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="h-4.5 w-4.5" />
+                    <span>Compartilhar Selecionados</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
