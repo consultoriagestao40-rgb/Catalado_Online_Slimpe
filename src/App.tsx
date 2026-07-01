@@ -6,14 +6,18 @@ import { AdminDashboard } from "./components/admin/AdminDashboard";
 import { User, ShieldCheck } from "lucide-react";
 
 export const AppContent: React.FC = () => {
-  // Estado para alternar entre visão do cliente e visão administrativa (inicia em admin se houver parâmetro na URL)
+  // Estado para alternar entre visão do cliente e visão administrativa (inicia em admin se a rota for /admin ou houver parâmetro)
   const [viewMode, setViewMode] = useState<"client" | "admin">(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get("admin") === "true" || params.get("painel") === "true" ? "admin" : "client";
+    const isPathAdmin = window.location.pathname === "/admin" || window.location.pathname === "/admin/";
+    const isParamAdmin = params.get("admin") === "true" || params.get("painel") === "true";
+    return isPathAdmin || isParamAdmin ? "admin" : "client";
   });
 
   const params = new URLSearchParams(window.location.search);
-  const isAdmin = params.get("admin") === "true" || params.get("painel") === "true";
+  const isPathAdmin = window.location.pathname === "/admin" || window.location.pathname === "/admin/";
+  const isParamAdmin = params.get("admin") === "true" || params.get("painel") === "true";
+  const isAdmin = isPathAdmin || isParamAdmin;
   const showAdminToggle = isAdmin || viewMode === "admin";
 
   // Hook para sincronizar os filtros na URL do navegador
@@ -38,6 +42,7 @@ export const AppContent: React.FC = () => {
           <div 
             onClick={() => {
               setViewMode("client");
+              window.history.replaceState(null, "", "/");
               clearFilters();
             }}
             className="flex items-center cursor-pointer select-none group"
@@ -53,7 +58,10 @@ export const AppContent: React.FC = () => {
           {showAdminToggle && (
             <div className="flex gap-1.5 bg-slate-100/80 p-1 rounded-2xl border border-slate-200/55">
               <button
-                onClick={() => setViewMode("client")}
+                onClick={() => {
+                  setViewMode("client");
+                  window.history.replaceState(null, "", "/");
+                }}
                 id="nav-btn-client"
                 className={`flex items-center gap-1.5 py-2 px-4 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
                   viewMode === "client"
@@ -66,7 +74,10 @@ export const AppContent: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setViewMode("admin")}
+                onClick={() => {
+                  setViewMode("admin");
+                  window.history.replaceState(null, "", "/admin");
+                }}
                 id="nav-btn-admin"
                 className={`flex items-center gap-1.5 py-2 px-4 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
                   viewMode === "admin"
