@@ -48,20 +48,23 @@ export const AppContent: React.FC = () => {
       {/* Header / Navbar */}
       <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 h-16 md:h-20 flex justify-between items-center">
-          {/* Logo */}
+          {/* Logo e Nome */}
           <div 
             onClick={() => {
               setViewMode("client");
               window.history.replaceState(null, "", "/");
               clearFilters();
             }}
-            className="flex items-center cursor-pointer select-none group"
+            className="flex items-center gap-3.5 cursor-pointer select-none group"
           >
             <img 
               src="https://slimpe.com.br/wp-content/uploads/2022/08/slimpe_logo_site.png" 
               alt="Slimpe Logo" 
               className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
             />
+            <span className="hidden sm:inline-block font-extrabold text-slate-800 text-sm md:text-lg tracking-tight border-l border-slate-200 pl-3.5">
+              Catálogo de Soluções <span className="text-emerald-600 font-black">Slimpe</span>
+            </span>
           </div>
 
           {/* Seletor de Visão (Pública vs Administrativa) - Visível apenas para o Lojista (?admin=true na URL) */}
