@@ -3,7 +3,7 @@ import { ProductProvider } from "./context/ProductContext";
 import { useQueryParams } from "./hooks/useQueryParams";
 import { ClientCatalog } from "./components/client/ClientCatalog";
 import { AdminDashboard } from "./components/admin/AdminDashboard";
-import { Sparkles, User, ShieldCheck } from "lucide-react";
+import { User, ShieldCheck } from "lucide-react";
 
 export const AppContent: React.FC = () => {
   // Estado para alternar entre visão do cliente e visão administrativa
@@ -31,19 +31,13 @@ export const AppContent: React.FC = () => {
               setViewMode("client");
               clearFilters();
             }}
-            className="flex items-center gap-2.5 cursor-pointer select-none group"
+            className="flex items-center cursor-pointer select-none group"
           >
-            <div className="h-10 w-10 md:h-11 md:w-11 rounded-2xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-600/10 group-hover:rotate-6 transition-transform">
-              <Sparkles className="h-5 w-5 md:h-5.5 md:w-5.5" />
-            </div>
-            <div>
-              <span className="text-xl md:text-2xl font-black text-slate-800 tracking-tight">
-                Slimpe
-              </span>
-              <span className="block text-[9px] md:text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none">
-                Facilities
-              </span>
-            </div>
+            <img 
+              src="https://slimpe.com.br/wp-content/uploads/2022/08/slimpe_logo_site.png" 
+              alt="Slimpe Logo" 
+              className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+            />
           </div>
 
           {/* Seletor de Visão (Pública vs Administrativa) */}
