@@ -10,7 +10,7 @@ interface AdminDashboardProps {
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
-  const { products, categories } = useProducts();
+  const { products, categories, loading } = useProducts();
 
   // Estados de autenticação
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -115,6 +115,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   }
 
   // Dashboard Administrador Autenticado
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <div className="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-emerald-600"></div>
+        <p className="mt-4 text-sm text-slate-400 font-semibold">Carregando dados do painel...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header do Painel */}

@@ -32,7 +32,7 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
   clearFilters,
   isAdmin,
 }) => {
-  const { products, categories } = useProducts();
+  const { products, categories, loading } = useProducts();
   const [catalogCopied, setCatalogCopied] = useState(false);
   const [focusedCopied, setFocusedCopied] = useState(false);
   const [personalLinkCopied, setPersonalLinkCopied] = useState(false);
@@ -313,7 +313,19 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
 
       {/* Grid de Produtos */}
       <div className="max-w-7xl mx-auto px-4 pb-32">
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+              <div key={n} className="bg-white rounded-3xl border border-slate-100 p-5 animate-pulse">
+                <div className="aspect-4/3 w-full bg-slate-100/70 rounded-2xl mb-4"></div>
+                <div className="h-5 bg-slate-100 rounded-lg w-3/4 mb-3"></div>
+                <div className="h-4 bg-slate-100 rounded-lg w-full mb-2"></div>
+                <div className="h-4 bg-slate-100 rounded-lg w-5/6 mb-4"></div>
+                <div className="h-10 bg-slate-100 rounded-xl w-full"></div>
+              </div>
+            ))}
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {filteredProducts.map((product) => (
               <ProductCard
