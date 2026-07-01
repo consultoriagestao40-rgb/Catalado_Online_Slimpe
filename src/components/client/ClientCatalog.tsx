@@ -297,15 +297,24 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
 
       {/* Seção de Filtros e Busca (Esconde ao visualizar compartilhamento de itens específicos para manter o foco) */}
       {sharedProductIds.length === 0 && (
-        <div className="max-w-7xl mx-auto px-4 mb-10 flex flex-col gap-6">
-          <SearchBar value={busca} onChange={setBusca} />
+        <div className="max-w-5xl mx-auto px-4 mb-10 flex flex-col md:flex-row items-stretch gap-5 w-full">
+          {/* Categorias à esquerda no desktop */}
+          <div className="w-full md:w-80 shrink-0">
+            <CategoryFilter
+              categories={categories}
+              selectedCategory={categoria}
+              onSelectCategory={setCategoria}
+              products={products}
+            />
+          </div>
           
-          <CategoryFilter
-            categories={categories}
-            selectedCategory={categoria}
-            onSelectCategory={setCategoria}
-            products={products}
-          />
+          {/* Campo de pesquisa à direita no desktop */}
+          <div className="w-full flex flex-col items-start">
+            <label htmlFor="search-input" className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
+              Buscar Produto
+            </label>
+            <SearchBar value={busca} onChange={setBusca} />
+          </div>
         </div>
       )}
 

@@ -22,7 +22,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-center max-w-sm mx-auto px-4">
+    <div className="w-full flex flex-col items-start">
       <label htmlFor="category-select" className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
         Filtrar por Categoria
       </label>
