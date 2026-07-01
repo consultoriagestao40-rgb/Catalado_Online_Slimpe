@@ -6,7 +6,15 @@ import { AdminDashboard } from "./components/admin/AdminDashboard";
 import { User, ShieldCheck } from "lucide-react";
 
 export const AppContent: React.FC = () => {
-  // Estado para alternar entre visão do cliente e visão administrativa (inicia em admin se a rota for /admin ou houver parâmetro)
+  // Estado para persistir se o usuário é administrador na sessão atual (inicia como true se a URL contiver /admin ou parâmetros)
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    const params = new URLSearchParams(window.location.search);
+    const isPathAdmin = window.location.pathname === "/admin" || window.location.pathname === "/admin/";
+    const isParamAdmin = params.get("admin") === "true" || params.get("painel") === "true";
+    return isPathAdmin || isParamAdmin;
+  });
+
+  // Estado para alternar entre visão do cliente e visão administrativa
   const [viewMode, setViewMode] = useState<"client" | "admin">(() => {
     const params = new URLSearchParams(window.location.search);
     const isPathAdmin = window.location.pathname === "/admin" || window.location.pathname === "/admin/";
@@ -14,11 +22,13 @@ export const AppContent: React.FC = () => {
     return isPathAdmin || isParamAdmin ? "admin" : "client";
   });
 
-  const params = new URLSearchParams(window.location.search);
-  const isPathAdmin = window.location.pathname === "/admin" || window.location.pathname === "/admin/";
-  const isParamAdmin = params.get("admin") === "true" || params.get("painel") === "true";
-  const isAdmin = isPathAdmin || isParamAdmin;
   const showAdminToggle = isAdmin || viewMode === "admin";
+
+  const handleAdminLogout = () => {
+    setIsAdmin(false);
+    setViewMode("client");
+    window.history.replaceState(null, "", "/");
+  };
 
   // Hook para sincronizar os filtros na URL do navegador
   const {
@@ -109,7 +119,7 @@ export const AppContent: React.FC = () => {
             isAdmin={isAdmin}
           />
         ) : (
-          <AdminDashboard />
+          <AdminDashboard onLogout={handleAdminLogout} />
         )}
       </main>
 

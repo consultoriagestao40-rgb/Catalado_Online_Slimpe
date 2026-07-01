@@ -5,7 +5,11 @@ import { ProductForm } from "./ProductForm";
 import { Product } from "../../types";
 import { Lock, Package, Tags, HelpCircle, Plus, List, LogOut } from "lucide-react";
 
-export const AdminDashboard: React.FC = () => {
+interface AdminDashboardProps {
+  onLogout?: () => void;
+}
+
+export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const { products, categories } = useProducts();
 
   // Estados de autenticação
@@ -34,6 +38,7 @@ export const AdminDashboard: React.FC = () => {
     setPassword("");
     setCurrentView("list");
     setEditingProduct(null);
+    onLogout?.();
   };
 
   const handleEditClick = (product: Product) => {
