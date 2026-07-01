@@ -1,8 +1,8 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { neon } from '@neondatabase/serverless';
 
-const databaseUrl = process.env.DATABASE_URL;
-const sql = databaseUrl ? neon(databaseUrl) : null;
+const databaseUrl = "postgresql://neondb_owner:npg_jv7tFfWa2yul@ep-bold-sunset-ahqi0ozv-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require";
+const sql = neon(databaseUrl);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -17,9 +17,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).end();
   }
 
-  if (!sql) {
-    return res.status(500).json({ error: 'Configuração do banco de dados (DATABASE_URL) ausente' });
-  }
+  // Conexão direta estabelecida
 
   try {
     // GET: Listar todas as categorias
