@@ -259,11 +259,8 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
       )}
 
       {/* Banner Principal com Apresentação */}
-      <div className="text-center max-w-3xl mx-auto px-4 py-8 md:py-12">
-        <h1 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tight">
-          Catálogo de Soluções <span className="text-emerald-600">Slimpe</span>
-        </h1>
-        <p className="mt-4 text-base md:text-lg text-slate-500 leading-relaxed">
+      <div className="text-center max-w-3xl mx-auto px-4 py-6 md:py-8">
+        <p className="text-base md:text-lg text-slate-500 leading-relaxed">
           {sharedProductIds.length > 0 
             ? "Confira os itens selecionados abaixo especialmente para você. Fale conosco no WhatsApp para tirar dúvidas ou fazer pedidos!"
             : "Tudo o que sua empresa precisa em produtos de limpeza de alta performance, higiene, descartáveis e utensílios profissionais."
