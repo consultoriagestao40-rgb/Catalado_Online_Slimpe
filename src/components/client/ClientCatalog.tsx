@@ -155,11 +155,11 @@ export const ClientCatalog: React.FC<ClientCatalogProps> = ({
         {/* Card Detalhado do Produto */}
         <div className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-xl shadow-slate-100/50 grid grid-cols-1 md:grid-cols-2">
           {/* Lado Esquerdo: Imagem */}
-          <div className="relative aspect-4/3 md:aspect-square bg-slate-50">
+          <div className="relative aspect-4/3 md:aspect-square bg-white flex items-center justify-center p-6 border-b md:border-b-0 md:border-r border-slate-100">
             <img
               src={focusedProduct.imageUrl}
               alt={focusedProduct.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain max-h-[350px] md:max-h-none"
             />
             {focusedProduct.price === undefined && (
               <div className="absolute top-6 right-6 px-4 py-1.5 rounded-full bg-amber-500 text-white text-sm font-semibold shadow-md">

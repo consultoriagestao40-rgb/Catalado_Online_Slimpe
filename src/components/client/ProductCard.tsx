@@ -70,11 +70,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       }`}
     >
       {/* Imagem do Produto */}
-      <div className="relative aspect-4/3 w-full bg-slate-100 overflow-hidden">
+      <div className="relative aspect-4/3 w-full bg-white overflow-hidden p-3 flex items-center justify-center border-b border-slate-100/50">
         <img
           src={product.imageUrl || "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80"}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-500"
           loading="lazy"
         />
         {/* Checkbox de Seleção Personalizada */}
