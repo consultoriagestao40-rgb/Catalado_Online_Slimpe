@@ -46,7 +46,7 @@ export const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       {/* Header / Navbar */}
-      <header className="sticky top-0 z-50 glassmorphism border-b border-slate-100/80">
+      <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 h-16 md:h-20 flex justify-between items-center">
           {/* Logo */}
           <div 
