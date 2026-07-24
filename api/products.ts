@@ -1,3 +1,4 @@
+// Cache bust: 2026-07-24 - Restauração de Banco de Dados
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { neon } from '@neondatabase/serverless';
 
